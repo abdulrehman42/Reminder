@@ -16,7 +16,10 @@ class ListViewModel @Inject constructor(private val listingRepository: ListingRe
     val listResponse: MutableLiveData<NetworkResult<ListResponseModel>>
         get() = listingRepository.listResponse
 
-    val listLocalResponse: MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>
+    val getItemLocalResponse: MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>
+        get() = listingRepository.getItemLocalResponse
+
+    val getListLocalResponse: MutableLiveData<NetworkResult<List<ListResponseModel.ResponseModelItem?>>>
         get() = listingRepository.listLocalResponse
 
     fun listRequest() {
@@ -29,9 +32,9 @@ class ListViewModel @Inject constructor(private val listingRepository: ListingRe
         }
     }
 
-    fun loadLocalData(id: String) {
+    fun loadItemData(id: String) {
         viewModelScope.launch {
-            listingRepository.getLocalData(id)
+            listingRepository.getLocalDataById(id)
         }
     }
 }

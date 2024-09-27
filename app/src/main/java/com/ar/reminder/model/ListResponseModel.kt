@@ -1,6 +1,5 @@
 package com.ar.reminder.model
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -81,7 +80,7 @@ class ListResponseModel:ArrayList<ListResponseModel.ResponseModelItem>()
         var Wed: Any?=null
     )
 
-    data class DailyRepeatvarues(
+    data class DailyRepeatvalues(
         var Fri: List<String>?= emptyList(),
         var Mon: List<String>?= emptyList(),
         var Sat: List<String>?= emptyList(),
@@ -92,11 +91,11 @@ class ListResponseModel:ArrayList<ListResponseModel.ResponseModelItem>()
     )
 
     data class ScheduleV2(
-        var dailyRepeatvarues: DailyRepeatvarues,
+        val dailyRepeatValues: DailyRepeatvalues,
         var timeType: String? = "",
         var timeValue: String? = "",
         var type: String? = "",
-        var yearlyRepeatDatevarue: String? = ""
+        val yearlyRepeatDateValue: String? = ""
     )
 
 }

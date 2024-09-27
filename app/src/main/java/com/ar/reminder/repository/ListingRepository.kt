@@ -20,9 +20,14 @@ class ListingRepository @Inject constructor(
         get() = _listResponse
 
     private val _listLocalResponse =
-        MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>()
-    val listLocalResponse: MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>
+        MutableLiveData<NetworkResult<List<ListResponseModel.ResponseModelItem?>>>()
+    val listLocalResponse: MutableLiveData<NetworkResult<List<ListResponseModel.ResponseModelItem?>>>
         get() = _listLocalResponse
+
+    private val _getItemLocalResponse =
+        MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>()
+    val getItemLocalResponse: MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>
+        get() = _getItemLocalResponse
 
     suspend fun getList() {
         _listResponse.postValue(NetworkResult.Loading())
@@ -86,9 +91,15 @@ class ListingRepository @Inject constructor(
 
     }
 
+    suspend fun getLocalDataById(id: String) {
+        withContext(Dispatchers.IO){
+            _getItemLocalResponse.postValue(NetworkResult.Success(responseModelDao.getResponseById(id)))
+        }
+
+    }
     suspend fun getLocalData(id: String) {
         withContext(Dispatchers.IO){
-            _listLocalResponse.postValue(NetworkResult.Success(responseModelDao.getListResponseById(id)))
+            _listLocalResponse.postValue(NetworkResult.Success(responseModelDao.getListResponse()))
         }
 
     }

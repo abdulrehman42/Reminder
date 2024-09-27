@@ -4,17 +4,13 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
 import com.ar.reminder.R
 import com.ar.reminder.databinding.ActivityDetailScreenBinding
 import com.ar.reminder.utils.Helper
 import com.ar.reminder.viewmodel.ListViewModel
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
 
 @AndroidEntryPoint
 class DetailScreen : AppCompatActivity() {
@@ -36,7 +32,7 @@ class DetailScreen : AppCompatActivity() {
     }
 
     private fun observer() {
-        listViewModel.listLocalResponse.observe(this) {
+        listViewModel.getItemLocalResponse.observe(this) {
             binding.apply {
                 it.data?.let {
                     it.scheduleV2?.let {
@@ -51,6 +47,9 @@ class DetailScreen : AppCompatActivity() {
                     Glide.with(this@DetailScreen).load(it.visualAidUrl)
                         .placeholder(R.drawable.storeplaceholder).into(imageId)
                 }
+
+               // scheduleNotifications(this@DetailScreen,it.data)
+
             }
         }
     }
