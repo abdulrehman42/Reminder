@@ -1,11 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Reminder" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Primary color for the toolbar and other UI elements -->
+        <item name="colorPrimary">#478FFE</item>
+
+        <!-- Secondary color for elements like FABs, buttons, etc. -->
+        <item name="colorSecondary">#FF4081</item>
+
+        <!-- Tertiary color for any other UI elements that require a distinct color -->
+        <item name="colorTertiary">#005BB5</item>
+
+        <!-- Optionally define more colors if needed -->
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorOnSecondary">@android:color/white</item>
     </style>
     <style name="shapeRadius">
         <item name="cornerSize">10%</item>
     </style>
+    <style name="Theme.Reminder.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="Theme.Reminder" parent="Base.Theme.Reminder" />
 </resources>

@@ -19,17 +19,12 @@ class ListingRepository @Inject constructor(
     val listResponse: MutableLiveData<NetworkResult<ListResponseModel>>
         get() = _listResponse
 
-    private val _listLocalResponse =
-        MutableLiveData<NetworkResult<List<ListResponseModel.ResponseModelItem?>>>()
-    val listLocalResponse: MutableLiveData<NetworkResult<List<ListResponseModel.ResponseModelItem?>>>
-        get() = _listLocalResponse
-
     private val _getItemLocalResponse =
         MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>()
     val getItemLocalResponse: MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>
         get() = _getItemLocalResponse
 
-    suspend fun getList() {
+    suspend fun fetchListData() {
         _listResponse.postValue(NetworkResult.Loading())
         val response = apiService.getListResponse()
         if (response.isSuccessful) {
@@ -88,18 +83,11 @@ class ListingRepository @Inject constructor(
             }
 
         }
-
     }
 
-    suspend fun getLocalDataById(id: String) {
+    suspend fun fetchLocalDataById(id: String) {
         withContext(Dispatchers.IO){
             _getItemLocalResponse.postValue(NetworkResult.Success(responseModelDao.getResponseById(id)))
-        }
-
-    }
-    suspend fun getLocalData(id: String) {
-        withContext(Dispatchers.IO){
-            _listLocalResponse.postValue(NetworkResult.Success(responseModelDao.getListResponse()))
         }
 
     }

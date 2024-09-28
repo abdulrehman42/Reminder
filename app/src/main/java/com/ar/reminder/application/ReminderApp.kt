@@ -17,8 +17,4 @@ class ReminderApp: Application() {
         super.onCreate()
         instance = this
     }
-
-    fun getListViewModel(): ListViewModel {
-        return EntryPointAccessors.fromApplication(this, ListViewModel::class.java)
-    }
 }

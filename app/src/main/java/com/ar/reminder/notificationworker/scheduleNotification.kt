@@ -1,11 +1,15 @@
 package com.ar.reminder.notificationworker
 
 import android.content.Context
+import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.workDataOf
 import com.ar.reminder.model.ListResponseModel
+import com.ar.reminder.utils.Constants.NOFICATION_MSG
+import com.ar.reminder.utils.Constants.NOTIFICATION_ID
+import com.ar.reminder.utils.Constants.SOUND_URL_ID
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -13,46 +17,42 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 fun scheduleNotifications(context: Context, listData: List<ListResponseModel.ResponseModelItem?>) {
-    if (listData.isNullOrEmpty()) return  // Return if listData is null or empty
+    if (listData.isNullOrEmpty()) return
 
-    // Define the time format
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-
-    // Get the current time
     val currentTime = Calendar.getInstance()
 
-    // Iterate over each item in listData
     for (item in listData) {
         item?.scheduleV2?.let { scheduleV2 ->
             val dailyRepeatValues = scheduleV2.dailyRepeatValues
 
-            // Iterate through each day and schedule notifications
             for (day in listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")) {
                 val timeList = when (day) {
-                    "Mon" -> dailyRepeatValues.Mon
-                    "Tue" -> dailyRepeatValues.Tue
-                    "Wed" -> dailyRepeatValues.Wed
-                    "Thu" -> dailyRepeatValues.Thu
-                    "Fri" -> dailyRepeatValues.Fri
-                    "Sat" -> dailyRepeatValues.Sat
-                    "Sun" -> dailyRepeatValues.Sun
+                    "Mon" -> dailyRepeatValues?.Mon
+                    "Tue" -> dailyRepeatValues?.Tue
+                    "Wed" -> dailyRepeatValues?.Wed
+                    "Thu" -> dailyRepeatValues?.Thu
+                    "Fri" -> dailyRepeatValues?.Fri
+                    "Sat" -> dailyRepeatValues?.Sat
+                    "Sun" -> dailyRepeatValues?.Sun
                     else -> emptyList()
                 }
 
-                // Schedule notifications for each time in the list
                 timeList?.forEach { timeString ->
                     try {
                         val time = timeFormat.parse(timeString)
                         val scheduledTime = getNextOccurrence(day, time)
 
-                        // Calculate the delay for the notification
                         val delay = scheduledTime.timeInMillis - currentTime.timeInMillis
+                        Log.d("NotificationSchedule", "Scheduling notification for $day at ${scheduledTime.time}, delay: $delay ms")
+
                         if (delay > 0) {
                             val workRequest: WorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
                                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                                .setInputData(workDataOf("notification_id" to item._id)) // Send item._id as data
+                                .setInputData(workDataOf(NOTIFICATION_ID to item._id))
+                                .setInputData(workDataOf(NOFICATION_MSG to item.name))
+                                .setInputData(workDataOf(SOUND_URL_ID to item.notifsV2SoundUrl))
                                 .build()
-
                             WorkManager.getInstance(context).enqueue(workRequest)
                         }
                     } catch (e: Exception) {
@@ -63,8 +63,6 @@ fun scheduleNotifications(context: Context, listData: List<ListResponseModel.Res
         }
     }
 }
-
-// Function to get the next occurrence of the scheduled day
 private fun getNextOccurrence(dayOfWeek: String, time: Date?): Calendar {
     val calendar = Calendar.getInstance()
     val dayMap = mapOf(

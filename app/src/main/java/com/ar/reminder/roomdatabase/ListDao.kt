@@ -17,6 +17,4 @@ interface ListDao {
     @Query("SELECT * FROM response_model_item_table WHERE _id = :id")
     fun getResponseById(id: String): ListResponseModel.ResponseModelItem
 
-    @Query("SELECT * FROM response_model_item_table")
-    fun getListResponse(): List<ListResponseModel.ResponseModelItem>
 }

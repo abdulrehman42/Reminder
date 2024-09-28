@@ -1,63 +1,62 @@
 package com.ar.reminder.utils
 
 import android.content.Context
+import android.content.Intent
 import android.media.MediaPlayer
-import android.widget.Toast
+import android.net.Uri
+import android.os.Build
+import android.os.PowerManager
+import com.ar.reminder.model.ListResponseModel
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 object Helper {
     fun getCurrentTime(): String {
-        val currentTime = LocalTime.now()
-        val formatter = DateTimeFormatter.ofPattern("h:mm a")
-        return currentTime.format(formatter)
+        return LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a"))
     }
 
-    private var mediaPlayer: MediaPlayer? = null
+    fun currentDaySchedule(list: ListResponseModel.ResponseModelItem?): String {
+        return list?.scheduleV2?.dailyRepeatValues?.let { repeatValues ->
+            val currentDay = SimpleDateFormat("EEE", Locale.getDefault()).format(Date())
 
-    fun playMp3FromUrl(context: Context, url: String, start: Boolean) {
-        if (start) {
-            mediaPlayer?.let {
-                if (it.isPlaying) {
-                    it.stop()
-                    it.reset()
-                }
+            val todaySchedule = when (currentDay) {
+                "Mon" -> repeatValues.Mon
+                "Tue" -> repeatValues.Tue
+                "Wed" -> repeatValues.Wed
+                "Thu" -> repeatValues.Thu
+                "Fri" -> repeatValues.Fri
+                "Sat" -> repeatValues.Sat
+                "Sun" -> repeatValues.Sun
+                else -> emptyList()
             }
 
-            // Initialize the MediaPlayer
-            mediaPlayer = MediaPlayer()
-
-            try {
-                mediaPlayer?.setDataSource(url)
-                mediaPlayer?.setOnPreparedListener {
-                    it.start() // Start playing the MP3 when prepared
-                    Toast.makeText(context, "Playing MP3", Toast.LENGTH_SHORT).show()
-                }
-                mediaPlayer?.setOnErrorListener { _, what, extra ->
-                    Toast.makeText(context, "Error: $what, Extra: $extra", Toast.LENGTH_SHORT).show()
-                    false
-                }
-                mediaPlayer?.prepareAsync() // Prepare asynchronously
-
-                // Release the media player when the playback is complete
-                mediaPlayer?.setOnCompletionListener {
-                    mediaPlayer?.release()
-                    mediaPlayer = null
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            if (todaySchedule.isNullOrEmpty()) {
+                "No schedule available for today"
+            } else {
+                todaySchedule.joinToString(separator = ", ")
             }
-        } else {
-            mediaPlayer?.let {
-                if (it.isPlaying) {
-                    it.stop()
-                    it.release() // Release the MediaPlayer resources
-                    mediaPlayer = null
-                    Toast.makeText(context, "Playback stopped", Toast.LENGTH_SHORT).show()
-                }
+        } ?: "No schedule available"
+    }
+
+
+    fun playMp3FromUrl(url: String) {
+        val mediaPlayer = MediaPlayer()
+        try {
+            mediaPlayer.setDataSource(url) // Set the URL of the MP3 file
+            mediaPlayer.prepareAsync() // Prepare the media player asynchronously
+            mediaPlayer.setOnPreparedListener {
+                mediaPlayer.start() // Start playback once the media is prepared
             }
+            mediaPlayer.setOnCompletionListener {
+                it.release() // Release resources when playback is complete
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
+
 }

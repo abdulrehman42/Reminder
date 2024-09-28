@@ -19,22 +19,18 @@ class ListViewModel @Inject constructor(private val listingRepository: ListingRe
     val getItemLocalResponse: MutableLiveData<NetworkResult<ListResponseModel.ResponseModelItem?>>
         get() = listingRepository.getItemLocalResponse
 
-    val getListLocalResponse: MutableLiveData<NetworkResult<List<ListResponseModel.ResponseModelItem?>>>
-        get() = listingRepository.listLocalResponse
-
-    fun listRequest() {
+    fun fetchListData() {
         viewModelScope.launch {
             try {
-                listingRepository.getList()
+                listingRepository.fetchListData()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
-
-    fun loadItemData(id: String) {
+    fun loadItemDataLocal(id: String) {
         viewModelScope.launch {
-            listingRepository.getLocalDataById(id)
+            listingRepository.fetchLocalDataById(id)
         }
     }
 }
