@@ -18,11 +18,9 @@ object Helper {
     fun getCurrentTime(): String {
         return LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a"))
     }
-
     fun currentDaySchedule(list: ListResponseModel.ResponseModelItem?): String {
         return list?.scheduleV2?.dailyRepeatValues?.let { repeatValues ->
             val currentDay = SimpleDateFormat("EEE", Locale.getDefault()).format(Date())
-
             val todaySchedule = when (currentDay) {
                 "Mon" -> repeatValues.Mon
                 "Tue" -> repeatValues.Tue
@@ -33,7 +31,6 @@ object Helper {
                 "Sun" -> repeatValues.Sun
                 else -> emptyList()
             }
-
             if (todaySchedule.isNullOrEmpty()) {
                 "No schedule available for today"
             } else {
@@ -41,22 +38,19 @@ object Helper {
             }
         } ?: "No schedule available"
     }
-
-
     fun playMp3FromUrl(url: String) {
         val mediaPlayer = MediaPlayer()
         try {
-            mediaPlayer.setDataSource(url) // Set the URL of the MP3 file
-            mediaPlayer.prepareAsync() // Prepare the media player asynchronously
+            mediaPlayer.setDataSource(url)
+            mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {
-                mediaPlayer.start() // Start playback once the media is prepared
+                mediaPlayer.start()
             }
             mediaPlayer.setOnCompletionListener {
-                it.release() // Release resources when playback is complete
+                it.release()
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
-
 }

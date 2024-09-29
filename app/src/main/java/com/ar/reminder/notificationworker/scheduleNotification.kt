@@ -18,10 +18,8 @@ import java.util.concurrent.TimeUnit
 
 fun scheduleNotifications(context: Context, listData: List<ListResponseModel.ResponseModelItem?>) {
     if (listData.isNullOrEmpty()) return
-
     val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
     val currentTime = Calendar.getInstance()
-
     for (item in listData) {
         item?.scheduleV2?.let { scheduleV2 ->
             val dailyRepeatValues = scheduleV2.dailyRepeatValues
@@ -74,25 +72,19 @@ private fun getNextOccurrence(dayOfWeek: String, time: Date?): Calendar {
         "Sat" to Calendar.SATURDAY,
         "Sun" to Calendar.SUNDAY
     )
-
-    // Set the hour and minute from the time
     time?.let {
         calendar.set(Calendar.HOUR_OF_DAY, it.hours)
         calendar.set(Calendar.MINUTE, it.minutes)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
     }
-
-    // Get the target day and calculate the days to add
     val targetDay = dayMap[dayOfWeek]
     val currentDay = calendar.get(Calendar.DAY_OF_WEEK)
 
     var daysToAdd = targetDay!! - currentDay
     if (daysToAdd < 0 || (daysToAdd == 0 && calendar.timeInMillis <= System.currentTimeMillis())) {
-        daysToAdd += 7 // Schedule for the next week
+        daysToAdd += 7
     }
-
     calendar.add(Calendar.DAY_OF_MONTH, daysToAdd)
-
     return calendar
 }
