@@ -11,6 +11,7 @@ class ReminderApp: Application() {
         lateinit var instance: ReminderApp
             private set
     }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
