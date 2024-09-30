@@ -1,42 +1,28 @@
 package com.ar.reminder.views.activity
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isGone
 import com.ar.reminder.R
 import com.ar.reminder.databinding.ActivityDetailScreenBinding
 import com.ar.reminder.utils.Helper
 import com.ar.reminder.utils.Helper.currentDaySchedule
-import com.ar.reminder.utils.Helper.getCurrentTime
 import com.ar.reminder.viewmodel.ListViewModel
+import com.ar.reminder.views.activity.base.BaseActivity
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
-
 @AndroidEntryPoint
-class DetailScreen : AppCompatActivity() {
-
+class DetailScreen : BaseActivity() {
     private lateinit var binding: ActivityDetailScreenBinding
     private val listViewModel by viewModels<ListViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initView()
-        observeViewModel()
+        setTimeTextView(binding.currentTime)
+        observerData()
+        handleClickEvents()
     }
-
-    private fun initView() {
-        binding.currentTime.text = getCurrentTime()
-        binding.okBtn.setOnClickListener {
-            finish()
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-        }
-    }
-
-    private fun observeViewModel() {
+    private fun observerData() {
         listViewModel.getItemLocalResponse.observe(this) { response ->
             response.data?.let { item ->
                 binding.apply {
@@ -61,4 +47,10 @@ class DetailScreen : AppCompatActivity() {
         }
     }
 
+    private fun handleClickEvents() {
+        binding.okBtn.setOnClickListener {
+            finish()
+            startFadeInOutTransition()
+        }
+    }
 }
